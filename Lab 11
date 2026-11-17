@@ -1,0 +1,24 @@
+import string, base64
+
+def rot13(s):
+    return s.translate(str.maketrans(
+        "zyxwvutsrqponZYXWVUTSRQPONmlkjihgfedcbaMLKJIHGFEDCBA",
+        "mlkjihgfedcbaMLKJIHGFEDCBAzyxwvutsrqponZYXWVUTSRQPON"))
+
+def unb64(s):
+    return base64.b64decode(s).decode('latin-1')
+
+def unshift(s, shift=4):
+    lo = string.ascii_lowercase
+    return s.translate(str.maketrans(lo[shift:] + lo[:shift], lo))
+
+undo = {'1': rot13, '2': unb64, '3': unshift}
+
+a = open('intercepted.txt').read().strip()
+layers = 0
+while a and a[0] in '123':
+    digit, a = a[0], a[1:]
+    a = undo[digit](a)
+    layers += 1
+
+print(layers, a)
